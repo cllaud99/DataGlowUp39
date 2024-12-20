@@ -2,59 +2,35 @@ import requests
 from bs4 import BeautifulSoup
 import os
 
-def listar_links_zip_municipio(url):
+def listar_links_zip_rar(url):
     """
-    Extrai links .zip contendo a palavra 'municipio' de uma página web.
+    Extrai links .zip e .rar de uma página web.
 
     Esta função faz uma requisição HTTP à URL fornecida e busca por todos os links de ancoragem (tags <a>)
-    que terminam com '.zip' e contêm a palavra 'municipio'.
+    que terminam com '.zip' ou '.rar'.
 
     Args:
         url (str): URL da página da qual os links serão extraídos.
 
     Returns:
-        list: Lista de links encontrados que atendem aos critérios (.zip e 'municipio').
+        list: Lista de links encontrados que terminam com '.zip' ou '.rar'.
     """
-    response = requests.get(url)
-    soup = BeautifulSoup(response.text, 'html.parser')
+    try:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()  # Levanta exceções para códigos de status HTTP de erro
+    except requests.RequestException as e:
+        print(f"Erro ao acessar a URL {url}: {e}")
+        return []
+
+    soup = BeautifulSoup(response.content, 'html.parser')
     
-    links_municipio = []
+    links = []
     for link in soup.find_all('a', href=True):
         href = link['href']
-        if href.endswith('.zip') and 'municipio' in href.lower():
-            links_municipio.append(href)
+        if href.endswith(('.zip', '.rar')):  # Verifica se o link termina com .zip ou .rar
+            links.append(href)
     
-    return links_municipio
-
-
-def listar_links_ano_incremental(ano_inicial):
-    """
-    Obtém links .zip contendo 'municipio' para múltiplos anos consecutivos.
-
-    A função começa no ano especificado e tenta acessar a URL do ano atual. Ela continua até que
-    uma resposta diferente de 200 seja recebida, indicando que o ano não tem dados disponíveis.
-
-    Args:
-        ano_inicial (int): Ano inicial para busca dos links.
-
-    Returns:
-        list: Lista de links encontrados para os anos com dados disponíveis.
-    """
-    base_url = "https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/indicadores-educacionais/remuneracao-media-dos-docentes/"
-    links_municipio = []
-    ano_atual = ano_inicial
-    
-    while True:
-        url = f"{base_url}{ano_atual}"
-        response = requests.get(url)
-        
-        if response.status_code != 200:
-            break
-        
-        links_municipio.extend(listar_links_zip_municipio(url))
-        ano_atual += 1
-    
-    return links_municipio
+    return links
 
 def baixar_arquivos(links, pasta_destino="downloads"):
     """
@@ -87,6 +63,6 @@ def baixar_arquivos(links, pasta_destino="downloads"):
 
 if __name__ == "__main__":
     # Exemplo de uso
-    ano_inicial = 2014
-    links = listar_links_ano_incremental(ano_inicial)
+    url = 'http://dados.prefeitura.sp.gov.br/it/dataset/microdados-matriculas'
+    links = listar_links_zip_rar(url)
     baixar_arquivos(links)
