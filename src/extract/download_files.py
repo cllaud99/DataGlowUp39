@@ -1,6 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
 import os
+import aiohttp
+import asyncio
 
 def listar_links_zip_rar(url):
     """
@@ -32,12 +34,36 @@ def listar_links_zip_rar(url):
     
     return links
 
-def baixar_arquivos(links, pasta_destino="downloads"):
+async def baixar_arquivo(session, link, pasta_destino):
     """
-    Faz o download dos arquivos a partir dos links fornecidos e os salva na pasta especificada.
+    Faz o download de um único arquivo de forma assíncrona.
 
-    A função verifica se a pasta de destino existe e a cria, caso necessário. Em seguida, faz o download
-    de cada arquivo e o salva com o nome original do arquivo na pasta de destino.
+    Args:
+        session (aiohttp.ClientSession): Sessão HTTP assíncrona.
+        link (str): URL do arquivo a ser baixado.
+        pasta_destino (str): Diretório onde o arquivo será salvo.
+
+    Returns:
+        None
+    """
+    arquivo = link.split('/')[-1]
+    caminho_arquivo = os.path.join(pasta_destino, arquivo)
+
+    print(f"Baixando {arquivo}...")
+    try:
+        async with session.get(link) as resposta:
+            if resposta.status == 200:
+                with open(caminho_arquivo, 'wb') as f:
+                    f.write(await resposta.read())
+                print(f"{arquivo} salvo em {caminho_arquivo}")
+            else:
+                print(f"Erro ao baixar {arquivo}: Código HTTP {resposta.status}")
+    except Exception as e:
+        print(f"Erro ao baixar {arquivo}: {e}")
+
+async def baixar_arquivos(links, pasta_destino="downloads"):
+    """
+    Faz o download de múltiplos arquivos de forma assíncrona e os salva na pasta especificada.
 
     Args:
         links (list): Lista de URLs para os arquivos a serem baixados.
@@ -49,20 +75,20 @@ def baixar_arquivos(links, pasta_destino="downloads"):
     if not os.path.exists(pasta_destino):
         os.makedirs(pasta_destino)
 
-    for link in links:
-        arquivo = link.split('/')[-1]
-        caminho_arquivo = os.path.join(pasta_destino, arquivo)
-        
-        print(f"Baixando {arquivo}...")
-        resposta = requests.get(link)
-        
-        with open(caminho_arquivo, 'wb') as f:
-            f.write(resposta.content)
-        print(f"{arquivo} salvo em {caminho_arquivo}")
+    async with aiohttp.ClientSession() as session:
+        tarefas = [baixar_arquivo(session, link, pasta_destino) for link in links]
+        await asyncio.gather(*tarefas)
 
-
-if __name__ == "__main__":
-    # Exemplo de uso
+def main_download():
+    """
+    Função principal para listar links e baixar arquivos.
+    """
     url = 'http://dados.prefeitura.sp.gov.br/it/dataset/microdados-matriculas'
     links = listar_links_zip_rar(url)
-    baixar_arquivos(links)
+    if links:
+        asyncio.run(baixar_arquivos(links))
+    else:
+        print("Nenhum link válido encontrado para download.")
+
+if __name__ == "__main__":
+    main_download()
