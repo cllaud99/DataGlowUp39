@@ -1,15 +1,23 @@
-from download_files import main_download
-from extract_file import extrair_arquivos_zip
+from crawler import get_year_urls, get_file_links
+from download_files_sinc import download_file, create_folder
+from extract_files import extrair_arquivos_zip
+
 
 
 def main():
 
-    pasta_destino = "downloads"
-    pasta_extraida = "downloads/extraidos"
+    pasta_destino = 'downloads'
 
-    main_download()
+    create_folder(pasta_destino)
+    urls = get_year_urls()
+    downloads_links = get_file_links(urls)
 
-    extrair_arquivos_zip(pasta_destino, pasta_extraida)
+    for link in downloads_links:
+        download_file(link, pasta_destino)
+
+    extrair_arquivos_zip(pasta_destino, pasta_destino)
+
+    
 
 
 if __name__ == "__main__":
