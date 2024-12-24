@@ -1,8 +1,10 @@
+import asyncio
+import os
+
+import aiohttp
 import requests
 from bs4 import BeautifulSoup
-import os
-import aiohttp
-import asyncio
+
 
 def listar_links_zip_rar(url):
     """
@@ -24,15 +26,18 @@ def listar_links_zip_rar(url):
         print(f"Erro ao acessar a URL {url}: {e}")
         return []
 
-    soup = BeautifulSoup(response.content, 'html.parser')
-    
+    soup = BeautifulSoup(response.content, "html.parser")
+
     links = []
-    for link in soup.find_all('a', href=True):
-        href = link['href']
-        if href.endswith(('.zip', '.rar')):  # Verifica se o link termina com .zip ou .rar
+    for link in soup.find_all("a", href=True):
+        href = link["href"]
+        if href.endswith(
+            (".zip", ".rar")
+        ):  # Verifica se o link termina com .zip ou .rar
             links.append(href)
-    
+
     return links
+
 
 async def baixar_arquivo(session, link, pasta_destino):
     """
@@ -46,20 +51,21 @@ async def baixar_arquivo(session, link, pasta_destino):
     Returns:
         None
     """
-    arquivo = link.split('/')[-1]
+    arquivo = link.split("/")[-1]
     caminho_arquivo = os.path.join(pasta_destino, arquivo)
 
     print(f"Baixando {arquivo}...")
     try:
         async with session.get(link) as resposta:
             if resposta.status == 200:
-                with open(caminho_arquivo, 'wb') as f:
+                with open(caminho_arquivo, "wb") as f:
                     f.write(await resposta.read())
                 print(f"{arquivo} salvo em {caminho_arquivo}")
             else:
                 print(f"Erro ao baixar {arquivo}: Código HTTP {resposta.status}")
     except Exception as e:
         print(f"Erro ao baixar {arquivo}: {e}")
+
 
 async def baixar_arquivos(links, pasta_destino="downloads"):
     """
@@ -79,16 +85,19 @@ async def baixar_arquivos(links, pasta_destino="downloads"):
         tarefas = [baixar_arquivo(session, link, pasta_destino) for link in links]
         await asyncio.gather(*tarefas)
 
+
 def main_download():
     """
     Função principal para listar links e baixar arquivos.
     """
-    url = 'http://dados.prefeitura.sp.gov.br/it/dataset/microdados-matriculas'
+    url = "http://dados.prefeitura.sp.gov.br/it/dataset/microdados-matriculas"
     links = listar_links_zip_rar(url)
     if links:
         asyncio.run(baixar_arquivos(links))
     else:
         print("Nenhum link válido encontrado para download.")
 
+
 if __name__ == "__main__":
     main_download()
+#

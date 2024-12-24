@@ -1,9 +1,10 @@
 import os
-import pandas as pd
 from typing import List, Type
+
+import pandas as pd
+from models import Escola, Turma  # Importa os modelos criados
 from pydantic import ValidationError
 
-from models import Escola, Turma  # Importa os modelos criados
 
 def validar_arquivos_csv(pasta: str):
     # Mapear modelos para nomes de arquivos esperados
@@ -11,17 +12,17 @@ def validar_arquivos_csv(pasta: str):
         "escola.csv": Escola,
         "turma.csv": Turma,
     }
-    
-    arquivos_csv = [f for f in os.listdir(pasta) if f.endswith('.csv')]
+
+    arquivos_csv = [f for f in os.listdir(pasta) if f.endswith(".csv")]
     resultados = []
 
     for arquivo in arquivos_csv:
         caminho_arquivo = os.path.join(pasta, arquivo)
-        
+
         if arquivo not in modelos:
             resultados.append((arquivo, "Modelo não encontrado"))
             continue
-        
+
         modelo: Type = modelos[arquivo]
         try:
             # Ler o CSV
@@ -35,7 +36,7 @@ def validar_arquivos_csv(pasta: str):
             resultados.append((arquivo, f"Erro de validação: {e}"))
         except Exception as e:
             resultados.append((arquivo, f"Erro ao processar: {e}"))
-    
+
     return resultados
 
 

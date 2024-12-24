@@ -1,6 +1,7 @@
 import os
-from dotenv import load_dotenv
+
 import psycopg2
+from dotenv import load_dotenv
 
 # Carregar variáveis do .env
 load_dotenv()
@@ -24,7 +25,7 @@ try:
         password=POSTGRES_PASSWORD,
         host=POSTGRES_HOST,
         port=POSTGRES_PORT,
-        database=POSTGRES_DB
+        database=POSTGRES_DB,
     )
 
     cursor = connection.cursor()
@@ -39,7 +40,7 @@ except Exception as error:
     print(f"Erro ao conectar ao banco de dados: {error}")
 
 finally:
-    if 'cursor' in locals() and cursor:
+    if "cursor" in locals() and cursor:
         cursor.close()
-    if 'connection' in locals() and connection:
+    if "connection" in locals() and connection:
         connection.close()

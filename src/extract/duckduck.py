@@ -1,7 +1,9 @@
 import duckdb
 
 # Caminho do arquivo CSV
-caminho_arquivo = 'downloads/extraidos/Microdados_EOL_Matricula_Atividades_Complementares.csv'
+caminho_arquivo = (
+    "downloads/extraidos/Microdados_EOL_Matricula_Atividades_Complementares.csv"
+)
 
 # Conectar ao DuckDB
 con = duckdb.connect()
@@ -14,4 +16,4 @@ FROM read_csv('downloads/extraidos/*.csv', header=True,  all_varchar = 1, ignore
 
 duckdb.sql(query).show()
 
-duckdb.sql(query).write_parquet("test.parquet") 
+duckdb.sql(query).write_parquet("test.parquet")
