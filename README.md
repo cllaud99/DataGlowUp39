@@ -14,19 +14,32 @@ O projeto utiliza dados abertos disponíveis no inep
 
 - [Indicadores Educacionais do INEP](https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/indicadores-educacionais)
 
+
 ## Arquitetura
 
-Para a arquitetura do projeto foram utilizados python com as bibliotecas descritas na imagem, postgres para armazenamento e subimos uma instancia briefer para futuras analises. E pode ser acessada no link:
+- **python**: Define a versão do Python usada no projeto.  
+- **requests**: Realiza requisições HTTP para baixar arquivos e acessar APIs.  
+- **bs4 (BeautifulSoup)**: Extrai e manipula dados de documentos HTML e XML.  
+- **pandas**: Manipula e analisa dados em estruturas como DataFrames e Series.  
+- **sqlalchemy**: Gerencia interações com bancos de dados usando ORM ou SQL puro.  
+- **python-dotenv**: Carrega variáveis de ambiente de arquivos `.env`.  
+- **openpyxl**: Manipula arquivos Excel (.xlsx), como leitura e escrita de dados.  
+- **psycopg2-binary**: Conecta e executa operações em bancos PostgreSQL.  
+- **pydantic**: Valida e define dados com base em contratos de modelos.  
+- **py7zr**: Extrai arquivos compactados no formato .7z.  
+- **taskipy**: Automatiza tarefas por meio de scripts definidos no `pyproject.toml`.
+- **briefer**: Ferramenta de visualização de dados que permite criar gráficos interativos e dashboards de maneira rápida e simples.  
+- **postgresql**: Sistema de gerenciamento de banco de dados relacional, usado para armazenar e consultar dados de forma estruturada e eficiente.
 
 https://excalidraw.com/#json=0A9b0nSjjW1GAbJRjSUfb,Zs5y1reLcLyYBp_m50iY4A
 
 ![Descrição da Imagem](pics/arquitetura.png)
 
-## Funcionalidades
 
-- **Extração de dados**: A partir de URLs do INEP, são baixados os arquivos .ZIP e extraido os arquivos dele, seguido de remoção de todos os arquivos não importantes para o projeto, mantendo apenas os Excel alvos.
-- **Transformação de dados**: Os dados extraídos são processados com pandas validações e são realizadas com pydantic atravez de um contrato de dados
-- **Carregamento de dados**: Após a transformação, os dados são inseridos no banco de dados postgres de forma controlada e estruturada.
+Funcionalidades
+**Extração de Dados:** Realiza o download de arquivos .ZIP a partir das URLs do INEP, extrai seu conteúdo e filtra apenas os arquivos Excel relevantes para o projeto, descartando os demais.
+**Transformação de Dados:** Processa os dados utilizando pandas e valida sua consistência com pydantic, garantindo conformidade com um contrato de dados definido.
+**Carregamento de Dados:** Insere os dados processados no banco de dados PostgreSQL de forma organizada e controlada, assegurando sua estruturação para uso futuro.
 
 ### Abaixo temos o fluxo simplificado do código 
 
