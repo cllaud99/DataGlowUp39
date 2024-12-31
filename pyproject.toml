@@ -1,0 +1,40 @@
+[tool.poetry]
+name = "dataglowup39"
+version = "0.1.0"
+description = ""
+authors = ["claudiohpontes <claudiohpontes@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+requests = "^2.32.3"
+bs4 = "^0.0.2"
+pandas = "^2.2.3"
+sqlalchemy = "^2.0.36"
+python-dotenv = "^1.0.1"
+openpyxl = "^3.1.5"
+psycopg2-binary = "^2.9.10"
+pydantic = "^2.10.4"
+py7zr = "^0.22.0"
+taskipy = "^1.14.1"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.10.0"
+isort = "^5.13.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.taskipy.tasks]
+format = """
+isort .
+black .
+"""
+kill = "kill -9 $(lsof -t -i :8000)"
+test = "pytest -v"
+run = """
+python3 src/pipeline.py
+"""
