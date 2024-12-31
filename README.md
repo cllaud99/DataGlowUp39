@@ -94,3 +94,53 @@ A estrutura do projeto é organizada da seguinte forma:
 ├── pipeline.py            # Script principal para rodar o processo ETL
 ├── pyproject.toml         # Arquivo de configuração do Poetry
 └── README.md              # Este arquivo
+```
+## Acessando o Briefer
+
+Acesse o link:
+http://localhost:3000/setup
+
+Configure o formulário:
+
+Preencha os campos solicitados no formulário.
+Clique em "Next" e, em seguida, em "Finish".
+Adicione a fonte de dados:
+
+Clique em "Data Sources" no canto inferior esquerdo, conforme ilustrado abaixo:
+<p align="center"> <img src="pics/data_sources.png" alt="Data Sources" /> </p>
+Clique em "Add Data Source".
+Escolha a opção PostgreSQL.
+Preencha os campos com as variáveis de ambiente configuradas no arquivo .env, com a seguinte exceção:
+O campo Host deve ser preenchido com "db".
+<p align="center"> <img src="pics/config.png" alt="Configuração de Fonte de Dados" /> </p>
+Teste a funcionalidade do Briefer:
+
+Acesse a aba "Query".
+Insira o código SQL abaixo em um bloco SQL e clique em "Create Visualization"
+<p align="center">
+  <img src="pics/config.png" alt="Data Sources" />
+</p>
+
+Pronto já está tudo configurado, para demonstrar o poder do Briefer clique em query e cole essa consulta em um bloco SQL e clique em "Create visualization"
+
+```sql
+select
+    nu_ano_censo as ano,
+    no_regiao as regiao,
+    avg(percentual_doutorado) as media_doutores
+from perc_docentes_ies
+    group by
+    nu_ano_censo,
+    no_regiao
+```
+
+## Visualize os dados:
+Com algumas configurações simples, você pode criar gráficos como o exemplo abaixo:
+
+<p align="center">
+  <img src="pics/sample_briefer_graph.png" alt="Data Sources" />
+</p>
+
+
+
+

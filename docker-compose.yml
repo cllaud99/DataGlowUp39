@@ -37,9 +37,15 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     command: ["task", "run"]
-    restart: "no"  # Garantir que o app reinicie caso falhe
+    depends_on:
+      - db
+    restart: "no"
 
 volumes:
   pg_data:
   briefer_jupyter_data:
   briefer_briefer_data:
+
+networks:
+  briefer_network:
+    driver: bridge
